@@ -28,41 +28,39 @@ HAUNTED_CITY = {
 
 def validate_haunted_map(graph):
     """
-    Validate the graph.
+    Validate the haunted city graph.
 
-    Raises:
-        ValueError if:
-        - weight <= 0
-        - neighbor node missing
+    Rules:
+    - All edge weights must be positive (> 0)
+    - Every neighbor must exist as a node in the graph
     """
-
     for node, neighbors in graph.items():
         for neighbor, weight in neighbors.items():
 
             if weight <= 0:
-                raise ValueError("Weights must be positive")
+                raise ValueError("Edge weights must be positive")
 
             if neighbor not in graph:
-                raise ValueError("Neighbor missing")
+                raise ValueError("Neighbor node missing from graph")
 
 
 def monster_delivery_costs(graph, start):
     """
-    Return shortest delivery costs from start node.
+    Return shortest delivery costs from start to every node.
+    Uses Dijkstra's algorithm.
     """
-
     validate_haunted_map(graph)
 
     if start not in graph:
-        raise ValueError("Start node missing")
+        raise ValueError("Start node not found")
 
     distances = {node: inf for node in graph}
     distances[start] = 0
 
-    priority_queue = [(0, start)]
+    pq = [(0, start)]
 
-    while priority_queue:
-        current_cost, current_node = heapq.heappop(priority_queue)
+    while pq:
+        current_cost, current_node = heapq.heappop(pq)
 
         if current_cost > distances[current_node]:
             continue
@@ -72,20 +70,19 @@ def monster_delivery_costs(graph, start):
 
             if new_cost < distances[neighbor]:
                 distances[neighbor] = new_cost
-
-                heapq.heappush(
-                    priority_queue,
-                    (new_cost, neighbor),
-                )
+                heapq.heappush(pq, (new_cost, neighbor))
 
     return distances
 
 
 def shortest_monster_delivery(graph, start, target):
     """
-    Return (cost, path) using Dijkstra algorithm.
-    """
+    Return:
+        (cost, path)
 
+    If unreachable or invalid:
+        (inf, [])
+    """
     try:
         validate_haunted_map(graph)
     except ValueError:
@@ -102,10 +99,10 @@ def shortest_monster_delivery(graph, start, target):
 
     distances[start] = 0
 
-    priority_queue = [(0, start)]
+    pq = [(0, start)]
 
-    while priority_queue:
-        current_cost, current_node = heapq.heappop(priority_queue)
+    while pq:
+        current_cost, current_node = heapq.heappop(pq)
 
         if current_cost > distances[current_node]:
             continue
@@ -116,15 +113,12 @@ def shortest_monster_delivery(graph, start, target):
             if new_cost < distances[neighbor]:
                 distances[neighbor] = new_cost
                 previous[neighbor] = current_node
-
-                heapq.heappush(
-                    priority_queue,
-                    (new_cost, neighbor),
-                )
+                heapq.heappush(pq, (new_cost, neighbor))
 
     if distances[target] == inf:
         return inf, []
 
+    # Reconstruct path
     path = []
     current = target
 
