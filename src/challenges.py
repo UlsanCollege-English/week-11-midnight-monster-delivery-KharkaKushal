@@ -27,7 +27,14 @@ HAUNTED_CITY = {
 
 
 def validate_haunted_map(graph):
-    """Validate the haunted graph."""
+    """
+    Validate the graph.
+
+    Raises:
+        ValueError if:
+        - weight <= 0
+        - neighbor node missing
+    """
 
     for node, neighbors in graph.items():
         for neighbor, weight in neighbors.items():
@@ -36,16 +43,18 @@ def validate_haunted_map(graph):
                 raise ValueError("Weights must be positive")
 
             if neighbor not in graph:
-                raise ValueError("Neighbor node missing")
+                raise ValueError("Neighbor missing")
 
 
 def monster_delivery_costs(graph, start):
-    """Return shortest costs from start node."""
+    """
+    Return shortest delivery costs from start node.
+    """
 
     validate_haunted_map(graph)
 
     if start not in graph:
-        raise ValueError("Missing start node")
+        raise ValueError("Start node missing")
 
     distances = {node: inf for node in graph}
     distances[start] = 0
@@ -63,6 +72,7 @@ def monster_delivery_costs(graph, start):
 
             if new_cost < distances[neighbor]:
                 distances[neighbor] = new_cost
+
                 heapq.heappush(
                     priority_queue,
                     (new_cost, neighbor),
@@ -72,7 +82,9 @@ def monster_delivery_costs(graph, start):
 
 
 def shortest_monster_delivery(graph, start, target):
-    """Return shortest path and cost."""
+    """
+    Return (cost, path) using Dijkstra algorithm.
+    """
 
     try:
         validate_haunted_map(graph)
