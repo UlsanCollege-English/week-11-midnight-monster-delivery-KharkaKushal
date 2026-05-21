@@ -1,4 +1,4 @@
-﻿"""Public tests for Week 11: Midnight Monster Delivery."""
+"""Public tests for Week 11: Midnight Monster Delivery."""
 
 from math import inf
 
