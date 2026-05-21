@@ -28,31 +28,32 @@ HAUNTED_CITY = {
 
 def validate_haunted_map(graph):
     """
-    Validate the haunted city graph.
+    Validate the haunted map.
 
     Rules:
-    - All edge weights must be positive (> 0)
-    - Every neighbor must exist as a node in the graph
+    - All weights must be positive
+    - All neighbor nodes must exist
     """
+
     for node, neighbors in graph.items():
         for neighbor, weight in neighbors.items():
 
             if weight <= 0:
-                raise ValueError("Edge weights must be positive")
+                raise ValueError("Weights must be positive")
 
             if neighbor not in graph:
-                raise ValueError("Neighbor node missing from graph")
+                raise ValueError("Neighbor node missing")
 
 
 def monster_delivery_costs(graph, start):
     """
-    Return shortest delivery costs from start to every node.
-    Uses Dijkstra's algorithm.
+    Return shortest costs from start to every node.
     """
+
     validate_haunted_map(graph)
 
     if start not in graph:
-        raise ValueError("Start node not found")
+        raise ValueError("Start node missing")
 
     distances = {node: inf for node in graph}
     distances[start] = 0
@@ -66,6 +67,7 @@ def monster_delivery_costs(graph, start):
             continue
 
         for neighbor, weight in graph[current_node].items():
+
             new_cost = current_cost + weight
 
             if new_cost < distances[neighbor]:
@@ -80,9 +82,10 @@ def shortest_monster_delivery(graph, start, target):
     Return:
         (cost, path)
 
-    If unreachable or invalid:
+    If invalid/unreachable:
         (inf, [])
     """
+
     try:
         validate_haunted_map(graph)
     except ValueError:
@@ -108,6 +111,7 @@ def shortest_monster_delivery(graph, start, target):
             continue
 
         for neighbor, weight in graph[current_node].items():
+
             new_cost = current_cost + weight
 
             if new_cost < distances[neighbor]:
@@ -118,7 +122,6 @@ def shortest_monster_delivery(graph, start, target):
     if distances[target] == inf:
         return inf, []
 
-    # Reconstruct path
     path = []
     current = target
 
